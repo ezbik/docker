@@ -1,0 +1,15 @@
+
+FROM ezbik/boringtun:debian AS builder
+
+FROM alpine
+
+WORKDIR /app
+COPY --from=builder /app/boringtun /usr/local/bin
+
+RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    apk add wireguard-tools-wg@testing iptables 
+
+ENV WG_LOG_LEVEL=info \
+    WG_THREADS=4 \
+    INTERFACE_NAME=wg0
+
